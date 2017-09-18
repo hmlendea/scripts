@@ -1,14 +1,21 @@
 #!/bin/bash
 
-# Get the executing directory
-SOURCE="${BASH_SOURCE[0]}"
-while [ -h "$SOURCE" ]; do
-  EXEC_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-  SOURCE="$(readlink "$SOURCE")"
-  [[ $SOURCE != /* ]] && SOURCE="$EXEC_DIR/$SOURCE"
-done
-EXEC_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-cd "$EXEC_DIR"
+# Set the current directory
+if [ -z "$*" ]; then
+	# cd to the executing directory if none is specified
+	SOURCE="${BASH_SOURCE[0]}"
+	while [ -h "$SOURCE" ]; do
+	  EXEC_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+	  SOURCE="$(readlink "$SOURCE")"
+	  [[ $SOURCE != /* ]] && SOURCE="$EXEC_DIR/$SOURCE"
+	done
+	EXEC_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+	
+else
+	# cd to the specified directory
+	EXEC_DIR="$*"
+	cd "$EXEC_DIR"
+fi
 
 # Define BASH colours
 RED='\033[0;31m'
@@ -20,8 +27,6 @@ NC='\033[0m' # reset colour
 
 # Update local git repo copies on the master branch
 for DIR in "$EXEC_DIR/"*"/"; do
-
-
     echo -e "${WHITE}Pulling the branch '${CYAN}master${WHITE}' for '${YELLOW}$DIR${WHITE}'${NC}"
 	cd $DIR
 	
