@@ -14,7 +14,7 @@ function __git_ps1 {
 function __short_cwd {
     MAX_LENGTH=$((COLUMNS*20/100))
     CWD=${PWD##*/}
-    
+
     if [ "$HOME" == "$PWD" ]; then
         echo "~"
     elif [ ${#CWD} -gt $((MAX_LENGTH)) ]; then
@@ -41,8 +41,9 @@ function set_custom_prompt {
 set_custom_prompt
 
 ### Environment variables
-#export TERM=linux
+export TERM=xterm
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH-}:/usr/lib32"
+export FREETYPE_PROPERTIES="truetype:interpreter-version=35"
 
 [ -f "$HOME/.gtkrc-2.0" ]   &&  export GTK2_RC_FILES="/etc/gtk-2.0/gtkrc:$HOME/.gtkrc-2.0"  # I use this for GTK theme in QT apps
 [ -f "/usr/bin/nano" ]      &&  export EDITOR=nano                                          # Make nano the default editor
@@ -50,15 +51,14 @@ export LD_LIBRARY_PATH="${LD_LIBRARY_PATH-}:/usr/lib32"
 [ -f "/usr/bin/optirun" ]   &&  export VGL_READBACK=pbo                                     # Better optirun performance
 
 ### Aliases
-alias cd..="cd .."
-alias grep='grep -a --color --text'
+alias sudo='sudo '
+alias sh='$SHELL'
 alias ls='ls --color=auto'
-alias rm-rf='rm -rf'
-alias sl='ls'
+alias grep='grep -a --color --text'
 alias uptime='uptime -p && printf "since " && uptime -s'
 
 [ -f "/usr/bin/yaourt" ]        &&  alias yaourt='sudo printf "" && yaourt --noconfirm'
-[ -f "/usr/bin/yaourt" ]        &&  alias yao='yaourt'
+#[ -f "/usr/bin/wine" ]          &&  alias wine='FREETYPE_PROPERTIES="truetype:interpreter-version=35" wine'
 [ -f "/usr/bin/wine" ]          &&  alias wine32='WINEARCH=win32 wine'
 [ -f "/usr/bin/wine" ]          &&  alias wine64='WINEARCH=win64 wine'
 [ -f "/proc/acpi/bbswitch" ]    &&  alias bbswitch-status="awk '{print $2}' /proc/acpi/bbswitch"
@@ -66,21 +66,20 @@ alias uptime='uptime -p && printf "since " && uptime -s'
 [ -f "/usr/bin/xprop" ]         &&  alias xprop-wmclass='xprop | grep "WM_CLASS"'
 [ -f "/usr/bin/wget" ]          &&  alias wget-persistent='wget -c --retry-connrefused --waitretry=1 --read-timeout=10 --timeout=5 -t 0'
 
-# GIT
-[ -f "/usr/bin/git" ] && alias glog="git log --graph --pretty=tformat:'%C(yellow)%h%Creset -%C(cyan)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
+### Per-application themes
+[ -f "/usr/bin/monodevelop" ]   &&  alias monodevelop="GNOME_DESKTOP_SESSION_ID="" monodevelop"
 
 ### PATH
 
-# Android
-if [ -d "$HOME/.Android/Sdk" ]; then
-    export ANDROID_HOME="$HOME/.Android/Sdk"
-    export PATH=${PATH}:${ANDROID_HOME}/tools
-    export PATH=${PATH}:${ANDROID_HOME}/platform-tools
-    export PATH=${PATH}:${ANDROID_HOME}/system-images
-fi
+function try_set_android_sdk_home {
+    NEW_PATH="$*"
 
-### Windows aliases
+    if [ -d "$NEW_PATH" ]; then
+        export ANDROID_HOME="$NEW_PATH"
+        export PATH=${PATH}:${ANDROID_HOME}/tools
+        export PATH=${PATH}:${ANDROID_HOME}/platform-tools
+        export PATH=${PATH}:${ANDROID_HOME}/system-images
+    fi
+}
 
-#if [ $(uname -o) == "Cygwin" ]; then
-#    [ -f "C:/Program Files/Git/bin/git.exe" ]   && alias git='C:/Program\ Files/Git/bin/git.exe'
-#fi
+try_set_android_sdk_home "$HOME/.Android/Sdk"
