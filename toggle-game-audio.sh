@@ -25,6 +25,7 @@ toggle_mute() {
 
 for APP_NAME in  \
     'java' 'Java(TM) Platform SE 8' \
-    'stellaris' 'Warhamme 40,000: Space Marine (tm)' 'Waterdeep.exe'; do
+    'Factorio 1.1.110' 'stellaris' 'Warhamme 40,000: Space Marine (tm)' 'Waterdeep.exe' \
+    'wine64-preloader'; do
     toggle_mute "${APP_NAME}"
 done
